@@ -136,7 +136,8 @@ define([
 
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
-        options.dropdownAdapter = Dropdown;
+        // multiple select displays search box on the dropdown panel
+        options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 

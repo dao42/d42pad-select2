@@ -34,6 +34,9 @@ define(function () {
     },
     removeAllItems: function () {     
       return '删除所有项目';
+    },
+    removeItem: function () {
+      return '移除选项';
     }
   };
 });

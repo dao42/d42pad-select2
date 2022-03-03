@@ -31,6 +31,9 @@ define(function () {
     },
     removeAllItems: function () {     
       return '刪除所有項目';
+    },
+    removeItem: function () {
+      return '移除選項';
     }
   };
 });

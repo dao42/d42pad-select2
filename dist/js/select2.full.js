@@ -1753,6 +1753,9 @@ S2.define('select2/selection/multiple',[
           return;
         }
 
+        // do not close the dropdown panel when the remove button is clicked.
+        evt.stopPropagation();
+
         var $remove = $(this);
         var $selection = $remove.parent();
 
@@ -2268,7 +2271,7 @@ S2.define('select2/selection/search',[
       data: item
     });
 
-    this.$search.val(item.text);
+    this.$search.val('');
     this.handleSearch();
   };
 
@@ -3311,9 +3314,16 @@ S2.define('select2/data/select',[
     var data = Array.prototype.map.call(
       this.$element[0].querySelectorAll(':checked'),
       function (selectedElement) {
-        return self.item($(selectedElement));
+        var option = self.item($(selectedElement));
+        if (!option._addOn) {
+          option._addOn = new Date();
+        }
+        return option;
       }
     );
+    data = data.sort(function (a, b) {
+      return a._addOn - b._addOn;
+    });
 
     callback(data);
   };
@@ -3322,6 +3332,8 @@ S2.define('select2/data/select',[
     var self = this;
 
     data.selected = true;
+
+    data._addOn = new Date();
 
     // If data.element is a DOM node, use it instead
     if (
@@ -3368,6 +3380,8 @@ S2.define('select2/data/select',[
     }
 
     data.selected = false;
+
+    data._addOn = undefined;
 
     if (
       data.element != null &&
@@ -5078,7 +5092,8 @@ S2.define('select2/defaults',[
 
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
-        options.dropdownAdapter = Dropdown;
+        // multiple select displays search box on the dropdown panel
+        options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 

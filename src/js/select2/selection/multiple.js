@@ -44,6 +44,9 @@ define([
           return;
         }
 
+        // do not close the dropdown panel when the remove button is clicked.
+        evt.stopPropagation();
+
         var $remove = $(this);
         var $selection = $remove.parent();
 

@@ -18,9 +18,16 @@ define([
     var data = Array.prototype.map.call(
       this.$element[0].querySelectorAll(':checked'),
       function (selectedElement) {
-        return self.item($(selectedElement));
+        var option = self.item($(selectedElement));
+        if (!option._addOn) {
+          option._addOn = new Date();
+        }
+        return option;
       }
     );
+    data = data.sort(function (a, b) {
+      return a._addOn - b._addOn;
+    });
 
     callback(data);
   };
@@ -29,6 +36,8 @@ define([
     var self = this;
 
     data.selected = true;
+
+    data._addOn = new Date();
 
     // If data.element is a DOM node, use it instead
     if (
@@ -75,6 +84,8 @@ define([
     }
 
     data.selected = false;
+
+    data._addOn = undefined;
 
     if (
       data.element != null &&

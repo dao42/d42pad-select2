@@ -220,7 +220,7 @@ define([
       data: item
     });
 
-    this.$search.val(item.text);
+    this.$search.val('');
     this.handleSearch();
   };
 
