@@ -139,7 +139,8 @@ define([
         // multiple select displays search box on the dropdown panel
         console.log('multiple select displays search box on the dropdown panel');
         debugger;
-        options.dropdownAdapter = Utils.Extend(Dropdown, DropdownSearch);
+        var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
+        options.dropdownAdapter = SearchableDropdown;
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 
