@@ -4257,12 +4257,6 @@ S2.define('select2/dropdown/search',[
     container.on('open', function () {
       self.$search.attr('tabindex', 0);
       self.$search.attr('aria-controls', resultsId);
-
-      self.$search.trigger('focus');
-
-      window.setTimeout(function () {
-        self.$search.trigger('focus');
-      }, 0);
     });
 
     container.on('close', function () {
@@ -5093,7 +5087,9 @@ S2.define('select2/defaults',[
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
         // multiple select displays search box on the dropdown panel
-        options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
+        console.log('multiple select displays search box on the dropdown panel');
+        debugger;
+        options.dropdownAdapter = Utils.Extend(Dropdown, DropdownSearch);
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 
