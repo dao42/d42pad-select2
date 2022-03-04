@@ -1,5 +1,5 @@
 /*!
- * Select2 4.1.0-rc.2
+ * Select2 4.1.0-rc.3
  * https://select2.github.io
  *
  * Released under the MIT license
@@ -5087,8 +5087,6 @@ S2.define('select2/defaults',[
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
         // multiple select displays search box on the dropdown panel
-        console.log('multiple select displays search box on the dropdown panel');
-        debugger;
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
         options.dropdownAdapter = SearchableDropdown;
       } else {
