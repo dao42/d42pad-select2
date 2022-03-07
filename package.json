@@ -22,7 +22,7 @@
     "src",
     "dist"
   ],
-  "version": "4.1.0-rc.3",
+  "version": "4.1.0-rc.4",
   "jspm": {
     "main": "js/select2",
     "directories": {

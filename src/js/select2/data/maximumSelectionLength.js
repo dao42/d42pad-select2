@@ -1,6 +1,6 @@
 define([
-
-], function (){
+  'jquery'
+], function ($){
   function MaximumSelectionLength (decorated, $e, options) {
     this.maximumSelectionLength = options.get('maximumSelectionLength');
 
@@ -14,6 +14,10 @@ define([
       decorated.call(this, container, $container);
 
       container.on('select', function () {
+        self._checkIfMaximumSelected();
+      });
+
+      container.on('unselect', function () {
         self._checkIfMaximumSelected();
       });
   };
@@ -33,15 +37,28 @@ define([
 
       this.current(function (currentData) {
         var count = currentData != null ? currentData.length : 0;
+        var resultsContainer = self.container.$results;
         if (self.maximumSelectionLength > 0 &&
           count >= self.maximumSelectionLength) {
-          self.trigger('results:message', {
-            message: 'maximumSelected',
-            args: {
-              maximum: self.maximumSelectionLength
+
+          $.each(resultsContainer.children(), function(index, child) {
+            var selected = currentData.findIndex(function(data) {
+              return data._resultId === child.id;
+            });
+            if (selected === -1) {
+              child.classList.remove('select2-results__option--selectable');
+              child.classList.add('select2-results__option--disabled');
             }
           });
           return;
+        } else if (self.maximumSelectionLength > 0 &&
+          count < self.maximumSelectionLength){
+          $.each(resultsContainer.children(), function(index, child) {
+            if (!$(child).attr('aria-disabled')) {
+                child.classList.remove('select2-results__option--disabled');
+                child.classList.add('select2-results__option--selectable');
+            }
+          });
         }
 
         if (successCallback) {

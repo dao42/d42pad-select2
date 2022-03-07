@@ -1,5 +1,5 @@
 /*!
- * Select2 4.1.0-rc.3
+ * Select2 4.1.0-rc.4
  * https://select2.github.io
  *
  * Released under the MIT license
@@ -4104,8 +4104,8 @@ S2.define('select2/data/maximumInputLength',[
 });
 
 S2.define('select2/data/maximumSelectionLength',[
-
-], function (){
+  'jquery'
+], function ($){
   function MaximumSelectionLength (decorated, $e, options) {
     this.maximumSelectionLength = options.get('maximumSelectionLength');
 
@@ -4119,6 +4119,10 @@ S2.define('select2/data/maximumSelectionLength',[
       decorated.call(this, container, $container);
 
       container.on('select', function () {
+        self._checkIfMaximumSelected();
+      });
+
+      container.on('unselect', function () {
         self._checkIfMaximumSelected();
       });
   };
@@ -4138,15 +4142,28 @@ S2.define('select2/data/maximumSelectionLength',[
 
       this.current(function (currentData) {
         var count = currentData != null ? currentData.length : 0;
+        var resultsContainer = self.container.$results;
         if (self.maximumSelectionLength > 0 &&
           count >= self.maximumSelectionLength) {
-          self.trigger('results:message', {
-            message: 'maximumSelected',
-            args: {
-              maximum: self.maximumSelectionLength
+
+          $.each(resultsContainer.children(), function(index, child) {
+            var selected = currentData.findIndex(function(data) {
+              return data._resultId === child.id;
+            });
+            if (selected === -1) {
+              child.classList.remove('select2-results__option--selectable');
+              child.classList.add('select2-results__option--disabled');
             }
           });
           return;
+        } else if (self.maximumSelectionLength > 0 &&
+          count < self.maximumSelectionLength){
+          $.each(resultsContainer.children(), function(index, child) {
+            if (!$(child).attr('aria-disabled')) {
+                child.classList.remove('select2-results__option--disabled');
+                child.classList.add('select2-results__option--selectable');
+            }
+          });
         }
 
         if (successCallback) {
@@ -5087,8 +5104,7 @@ S2.define('select2/defaults',[
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
         // multiple select displays search box on the dropdown panel
-        var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
-        options.dropdownAdapter = SearchableDropdown;
+        options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 

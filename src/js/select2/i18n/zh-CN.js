@@ -37,6 +37,9 @@ define(function () {
     },
     removeItem: function () {
       return '移除选项';
+    },
+    search: function() {
+      return '搜索';
     }
   };
 });
