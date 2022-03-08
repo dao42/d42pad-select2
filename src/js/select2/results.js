@@ -126,6 +126,8 @@ define([
 
       var $options = self.$results
         .find('.select2-results__option--selectable');
+      
+      var maximumSelectionLength = self.options.get('maximumSelectionLength');
 
       $options.each(function () {
         var $option = $(this);
@@ -142,6 +144,13 @@ define([
         } else {
           this.classList.remove('select2-results__option--selected');
           $option.attr('aria-selected', 'false');
+
+          if (maximumSelectionLength && selectedIds.length >= 
+            maximumSelectionLength) {
+            this.classList.remove('select2-results__option--selected');
+            this.classList.remove('select2-results__option--selectable');
+            this.classList.add('select2-results__option--disabled');
+          }
         }
       });
 

@@ -1,5 +1,5 @@
 /*!
- * Select2 4.1.0-rc.4
+ * Select2 4.1.0-rc.5
  * https://select2.github.io
  *
  * Released under the MIT license
@@ -977,6 +977,8 @@ S2.define('select2/results',[
 
       var $options = self.$results
         .find('.select2-results__option--selectable');
+      
+      var maximumSelectionLength = self.options.get('maximumSelectionLength');
 
       $options.each(function () {
         var $option = $(this);
@@ -993,6 +995,13 @@ S2.define('select2/results',[
         } else {
           this.classList.remove('select2-results__option--selected');
           $option.attr('aria-selected', 'false');
+
+          if (maximumSelectionLength && selectedIds.length >= 
+            maximumSelectionLength) {
+            this.classList.remove('select2-results__option--selected');
+            this.classList.remove('select2-results__option--selectable');
+            this.classList.add('select2-results__option--disabled');
+          }
         }
       });
 
@@ -4130,7 +4139,6 @@ S2.define('select2/data/maximumSelectionLength',[
   MaximumSelectionLength.prototype.query =
     function (decorated, params, callback) {
       var self = this;
-
       this._checkIfMaximumSelected(function () {
         decorated.call(self, params, callback);
       });
@@ -4139,24 +4147,10 @@ S2.define('select2/data/maximumSelectionLength',[
   MaximumSelectionLength.prototype._checkIfMaximumSelected =
     function (_, successCallback) {
       var self = this;
-
       this.current(function (currentData) {
         var count = currentData != null ? currentData.length : 0;
         var resultsContainer = self.container.$results;
         if (self.maximumSelectionLength > 0 &&
-          count >= self.maximumSelectionLength) {
-
-          $.each(resultsContainer.children(), function(index, child) {
-            var selected = currentData.findIndex(function(data) {
-              return data._resultId === child.id;
-            });
-            if (selected === -1) {
-              child.classList.remove('select2-results__option--selectable');
-              child.classList.add('select2-results__option--disabled');
-            }
-          });
-          return;
-        } else if (self.maximumSelectionLength > 0 &&
           count < self.maximumSelectionLength){
           $.each(resultsContainer.children(), function(index, child) {
             if (!$(child).attr('aria-disabled')) {
@@ -4226,11 +4220,16 @@ S2.define('select2/dropdown/search',[
   Search.prototype.render = function (decorated) {
     var $rendered = decorated.call(this);
     var searchLabel = this.options.get('translations').get('search');
-
+    var searchboxPlaceholder = this.options.get('searchboxPlaceholder');
+    var placeholder = '';
+    if (searchboxPlaceholder) {
+      placeholder = ' placeholder="' +  searchboxPlaceholder + '"';
+    }
     var $search = $(
       '<span class="select2-search select2-search--dropdown">' +
         '<input class="select2-search__field" type="search" tabindex="-1"' +
         ' autocorrect="off" autocapitalize="none"' +
+        placeholder +
         ' spellcheck="false" role="searchbox" aria-autocomplete="list" />' +
       '</span>'
     );

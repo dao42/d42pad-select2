@@ -25,7 +25,6 @@ define([
   MaximumSelectionLength.prototype.query =
     function (decorated, params, callback) {
       var self = this;
-
       this._checkIfMaximumSelected(function () {
         decorated.call(self, params, callback);
       });
@@ -34,24 +33,10 @@ define([
   MaximumSelectionLength.prototype._checkIfMaximumSelected =
     function (_, successCallback) {
       var self = this;
-
       this.current(function (currentData) {
         var count = currentData != null ? currentData.length : 0;
         var resultsContainer = self.container.$results;
         if (self.maximumSelectionLength > 0 &&
-          count >= self.maximumSelectionLength) {
-
-          $.each(resultsContainer.children(), function(index, child) {
-            var selected = currentData.findIndex(function(data) {
-              return data._resultId === child.id;
-            });
-            if (selected === -1) {
-              child.classList.remove('select2-results__option--selectable');
-              child.classList.add('select2-results__option--disabled');
-            }
-          });
-          return;
-        } else if (self.maximumSelectionLength > 0 &&
           count < self.maximumSelectionLength){
           $.each(resultsContainer.children(), function(index, child) {
             if (!$(child).attr('aria-disabled')) {
