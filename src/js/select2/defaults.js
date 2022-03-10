@@ -137,7 +137,11 @@ define([
     if (options.dropdownAdapter == null) {
       if (options.multiple) {
         // multiple select displays search box on the dropdown panel
-        options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
+        if (options.tags) {
+          options.dropdownAdapter = Dropdown;
+        } else {
+          options.dropdownAdapter = Utils.Decorate(Dropdown, DropdownSearch);
+        }
       } else {
         var SearchableDropdown = Utils.Decorate(Dropdown, DropdownSearch);
 
